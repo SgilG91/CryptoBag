@@ -12,10 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.List;
+
+import au.edu.unsw.infs3634.cryptobag.Entities.Coin;
 
 public class CoinAdapter extends RecyclerView.Adapter<CoinAdapter.CoinViewHolder> {
     private MainActivity mParentActivity;
-    private ArrayList<Coin> mCoins;
+    private List<Coin> mCoins;
     private boolean mTwoPane;
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
@@ -64,8 +67,8 @@ public class CoinAdapter extends RecyclerView.Adapter<CoinAdapter.CoinViewHolder
     public void onBindViewHolder(CoinViewHolder holder, int position) {
         Coin coin = mCoins.get(position);
         holder.name.setText(coin.getName());
-        holder.value.setText(NumberFormat.getCurrencyInstance().format(coin.getValue()));
-        holder.change.setText(String.valueOf(coin.getChange1h()) + " %");
+        holder.value.setText(NumberFormat.getCurrencyInstance().format(Double.valueOf(coin.getPriceUsd())));
+        holder.change.setText(coin.getPercentChange24h() + " %");
         holder.itemView.setTag(coin);
         holder.itemView.setOnClickListener(mOnClickListener);
     }

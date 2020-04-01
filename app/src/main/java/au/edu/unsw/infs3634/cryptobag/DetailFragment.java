@@ -11,7 +11,13 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
+import com.google.gson.Gson;
+
 import java.text.NumberFormat;
+import java.util.List;
+
+import au.edu.unsw.infs3634.cryptobag.Entities.Coin;
+import au.edu.unsw.infs3634.cryptobag.Entities.CoinLoreResponse;
 
 public class DetailFragment extends Fragment {
     public static final String ARG_ITEM_ID = "item_id";
@@ -24,7 +30,16 @@ public class DetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if(getArguments().containsKey(ARG_ITEM_ID)) {
-            mCoin = Coin.getCoin(getArguments().getString(ARG_ITEM_ID));
+
+            Gson gson = new Gson();
+            CoinLoreResponse response = gson.fromJson(CoinLoreResponse.json, CoinLoreResponse.class);
+            List <Coin> coins = response.getData();
+            for (Coin coin: coins){
+                if(coin.getId().equals(getArguments().getString(ARG_ITEM_ID)))
+                {
+                    mCoin= coin;
+                }
+            }
             this.getActivity().setTitle(mCoin.getName());
         }
     }
@@ -37,12 +52,12 @@ public class DetailFragment extends Fragment {
             NumberFormat formatter = NumberFormat.getCurrencyInstance();
             ((TextView) rootView.findViewById(R.id.tvName)).setText(mCoin.getName());
             ((TextView) rootView.findViewById(R.id.tvSymbol)).setText(mCoin.getSymbol());
-            ((TextView) rootView.findViewById(R.id.tvValueField)).setText(formatter.format(mCoin.getValue()));
-            ((TextView) rootView.findViewById(R.id.tvChange1hField)).setText(String.valueOf(mCoin.getChange1h()) + " %");
-            ((TextView) rootView.findViewById(R.id.tvChange24hField)).setText(String.valueOf(mCoin.getChange24h()) + " %");
-            ((TextView) rootView.findViewById(R.id.tvChange7dField)).setText(String.valueOf(mCoin.getChange7d()) + " %");
-            ((TextView) rootView.findViewById(R.id.tvMarketcapField)).setText(formatter.format(mCoin.getMarketcap()));
-            ((TextView) rootView.findViewById(R.id.tvVolumeField)).setText(formatter.format(mCoin.getVolume()));
+            ((TextView) rootView.findViewById(R.id.tvValueField)).setText(formatter.format(Double.valueOf(mCoin.getPriceUsd())));
+            ((TextView) rootView.findViewById(R.id.tvChange1hField)).setText(mCoin.getPercentChange1h() + " %");
+            ((TextView) rootView.findViewById(R.id.tvChange24hField)).setText(mCoin.getPercentChange24h() + " %");
+            ((TextView) rootView.findViewById(R.id.tvChange7dField)).setText(mCoin.getPercentChange7d() + " %");
+            ((TextView) rootView.findViewById(R.id.tvMarketcapField)).setText(formatter.format(mCoin.getMarketCapUsd()));
+            ((TextView) rootView.findViewById(R.id.tvVolumeField)).setText(formatter.format(mCoin.getVolume24()));
             ((ImageView) rootView.findViewById(R.id.ivSearch)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
